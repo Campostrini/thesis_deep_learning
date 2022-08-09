@@ -1,0 +1,217 @@
+\resizebox{\textwidth}{!}{%
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\BNColor{rgb:yellow,5;white,5}
+\def\ReluColor{rgb:yellow,5;red,15;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\DcnvColor{rgb:blue,5;green,2.5;white,5}
+\def\SoftmaxColor{rgb:magenta,5;black,7}
+\def\SumColor{rgb:blue,5;green,15}
+\def\InputColor{rgb:green,10;black,10;blue,5}
+\def\UpsampleColor{rgb:blue,20;green,5;black,5}
+\def\SkipColor{rgb:blue,5;red,2.5;white,5}
+\def\poolsep{0.2}
+\def\horsep{0.7}
+
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.6]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Draw Layer Blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input
+\pic[shift={(0,0,0)}] at (0,0,0) {Box={name=input,%
+        xlabel={{"I","dummy"}},fill=\InputColor,height=40,width=5,depth=40,zlabel=W,caption=Input}};
+% basic_block 1
+\pic[shift={(\horsep,0,0)}] at (input-east) {Box={name=b1conv1,%
+        xlabel={{"I","dummy"}},fill=\ConvColor,height=40,width=5,depth=40}};
+\pic[shift={(0,0,0)}] at (b1conv1-east) {Box={name=b1norm,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (b1norm-east) {Box={name=b1lrelu,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (b1lrelu-east) {Box={name=b1conv2,%
+        xlabel={{"I","dummy"}},fill=\ConvColor,height=40,width=5,depth=40,zlabel=W/2}};
+
+% downsample_block_1
+\pic[shift={(\horsep,0,0)}] at (b1conv2-east) {Box={name=d1norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (d1norm1-east) {Box={name=d1lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=40,width=2,depth=40}};
+\pic[shift={(\poolsep,0,0)}] at (d1lrelu1-east) {Box={name=d1maxpool,%
+        xlabel={{"P","dummy"}},fill=\PoolColor,height=30,width=2,depth=30}};
+\pic[shift={(\poolsep,0,0)}] at (d1maxpool-east) {Box={name=d1norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (d1norm2-east) {Box={name=d1lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (d1lrelu2-east) {Box={name=d1conv,%
+        xlabel={{"32","dummy"}},fill=\ConvColor,height=30,width=7.5,depth=30,zlabel=W/4}};
+        
+% downskip_block_1
+%\pic[shift={(0,0,30)}] at (d1norm1-east) {Box={name=ds1conv,%
+%        xlabel="B",fill=\ConvColor,height=40,width=7.5,depth=40}};
+%\pic[shift={(\poolsep,0,0)}] at (ds1conv-east) {Box={name=ds1avgpool,%
+%        xlabel="L",fill=\PoolColor,height=30,width=2,depth=30}};
+%\pic[shift={(\poolsep,0,0)}] at (ds1avgpool-east) {Box={name=ds1norm,%
+%        xlabel="P",fill=\BNColor,height=30,width=2,depth=30}};
+        
+% downsample_block_2
+\pic[shift={(\horsep,-10.2,0)}] at (d1conv-east) {Box={name=d2norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (d2norm1-east) {Box={name=d2lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=30,width=2,depth=30}};
+\pic[shift={(\poolsep,0,0)}] at (d2lrelu1-east) {Box={name=d2maxpool,%
+        xlabel="P",fill=\PoolColor,height=22,width=2,depth=22}};
+\pic[shift={(\poolsep,0,0)}] at (d2maxpool-east) {Box={name=d2norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (d2norm2-east) {Box={name=d2lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (d2lrelu2-east) {Box={name=d2conv,%
+        xlabel={{"64","dummy"}},fill=\ConvColor,height=22,width=12.5,depth=22,zlabel=W/8}};
+        
+% downskip_block_2
+%\pic[shift={(0,0,25.5)}] at (d2norm1-east) {Box={name=ds2conv,%
+%        xlabel="B",fill=\ConvColor,height=30,width=12.5,depth=30}};
+%\pic[shift={(\poolsep,0,0)}] at (ds2conv-east) {Box={name=ds2avgpool,%
+%        xlabel="L",fill=\PoolColor,height=22,width=2,depth=22}};
+%\pic[shift={(\poolsep,0,0)}] at (ds2avgpool-east) {Box={name=ds2norm,%
+%        xlabel="P",fill=\BNColor,height=22,width=2,depth=22}};
+        
+% downsample_block_3
+\pic[shift={(\horsep,-8.5,0)}] at (d2conv-east) {Box={name=d3norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (d3norm1-east) {Box={name=d3lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=22,width=2,depth=22}};
+\pic[shift={(\poolsep,0,0)}] at (d3lrelu1-east) {Box={name=d3maxpool,%
+        xlabel="P",fill=\PoolColor,height=15,width=2,depth=15}};
+\pic[shift={(\poolsep,0,0)}] at (d3maxpool-east) {Box={name=d3norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=15,width=2,depth=15}};
+\pic[shift={(0,0,0)}] at (d3norm2-east) {Box={name=d3lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=15,width=2,depth=15}};
+\pic[shift={(0,0,0)}] at (d3lrelu2-east) {Box={name=d3conv,%
+        xlabel={{"128","dummy"}},fill=\ConvColor,height=15,width=17.5,depth=15,zlabel=W/16}};
+        
+% downskip_block_2
+%\pic[shift={(0,0,19.5)}] at (d3norm1-east) {Box={name=ds3conv,%
+%        xlabel="B",fill=\ConvColor,height=22,width=17.5,depth=22}};
+%\pic[shift={(\poolsep,0,0)}] at (ds3conv-east) {Box={name=ds3avgpool,%
+%        xlabel="L",fill=\PoolColor,height=15,width=2,depth=15}};
+%\pic[shift={(\poolsep,0,0)}] at (ds3avgpool-east) {Box={name=ds3norm,%
+%        xlabel="P",fill=\BNColor,height=15,width=2,depth=15}};
+        
+% basic_block 2 bottleneck
+\pic[shift={(\horsep,-6.5,0)}] at (d3conv-east) {Box={name=b2conv1,%
+        xlabel={{"128","dummy"}},fill=\ConvColor,height=15,width=17.5,depth=15}};
+\pic[shift={(0,0,0)}] at (b2conv1-east) {Box={name=b2norm,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=15,width=2,depth=15}};
+\pic[shift={(0,0,0)}] at (b2norm-east) {Box={name=b2lrelu,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=15,width=2,depth=15}};
+\pic[shift={(0,0,0)}] at (b2lrelu-east) {Box={name=b2conv2,%
+        xlabel={{"128","dummy"}},fill=\ConvColor,height=15,width=17.5,depth=15,zlabel=W/16}};
+        
+% Ball up 1
+\pic[shift={(0,6.5,0)}] at (b2conv2-anchor) {Ball={name=sum1,fill=\SkipColor,radius=2.5,logo=$+$}};
+        
+        
+% upsample_block_1
+\pic[shift={(\horsep,6.5,0)}] at (b2conv2-east) {Box={name=u1maxpool,%
+        xlabel="U",fill=\UpsampleColor,height=22,width=2,depth=22}};
+\pic[shift={(\poolsep,0,0)}] at (u1maxpool-east) {Box={name=u1norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (u1norm1-east) {Box={name=u1lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (u1lrelu1-east) {Box={name=u1conv1,%
+        xlabel={{"64","dummy"}},fill=\ConvColor,height=22,width=12.5,depth=22}};
+\pic[shift={(0,0,0)}] at (u1conv1-east) {Box={name=u1norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (u1norm2-east) {Box={name=u1lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=22,width=2,depth=22}};
+\pic[shift={(0,0,0)}] at (u1lrelu2-east) {Box={name=u1conv2,%
+        xlabel={{"64","dummy"}},fill=\ConvColor,height=22,width=12.5,depth=22,zlabel=W/8}};
+        
+% Ball up 2
+\pic[shift={(0,8.5,0)}] at (u1conv2-anchor) {Ball={name=sum2,fill=\SkipColor,radius=2.5,logo=$+$}};
+        
+%% upskip_block_2
+%\pic[shift={(0,0,-19.5)}] at (u1maxpool-east) {Box={name=us1upsample,%
+%        xlabel="U",fill=\UpsampleColor,height=22,width=2,depth=22}};
+%\pic[shift={(\poolsep,0,0)}] at (us1upsample-east) {Box={name=us1conv,%
+%        xlabel="C",fill=\ConvColor,height=22,width=12.5,depth=22}};
+%\pic[shift={(0,0,0)}] at (us1conv-east) {Box={name=us1norm,%
+%        xlabel="B",fill=\BNColor,height=22,width=2,depth=22}};
+        
+% upsample_block_2
+\pic[shift={(\horsep,8.5,0)}] at (u1conv2-east) {Box={name=u2maxpool,%
+        xlabel="U",fill=\UpsampleColor,height=30,width=2,depth=30}};
+\pic[shift={(\poolsep,0,0)}] at (u2maxpool-east) {Box={name=u2norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (u2norm1-east) {Box={name=u2lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (u2lrelu1-east) {Box={name=u2conv1,%
+        xlabel={{"32","dummy"}},fill=\ConvColor,height=30,width=7.5,depth=30}};
+\pic[shift={(0,0,0)}] at (u2conv1-east) {Box={name=u2norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (u2norm2-east) {Box={name=u2lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=30,width=2,depth=30}};
+\pic[shift={(0,0,0)}] at (u2lrelu2-east) {Box={name=u2conv2,%
+        xlabel={{"32","dummy"}},fill=\ConvColor,height=30,width=7.5,depth=30,zlabel=W/4}};
+        
+% Ball up 3
+\pic[shift={(0,10.2,0)}] at (u2conv2-anchor) {Ball={name=sum3,fill=\SkipColor,radius=2.5,logo=$+$}};
+        
+% upsample_block_3
+\pic[shift={(\horsep,10.2,0)}] at (u2conv2-east) {Box={name=u3maxpool,%
+        xlabel="U",fill=\UpsampleColor,height=40,width=2,depth=40}};
+\pic[shift={(\poolsep,0,0)}] at (u3maxpool-east) {Box={name=u3norm1,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (u3norm1-east) {Box={name=u3lrelu1,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (u3lrelu1-east) {Box={name=u3conv1,%
+        xlabel={{"O","dummy"}},fill=\ConvColor,height=40,width=7,depth=40}};
+\pic[shift={(0,0,0)}] at (u3conv1-east) {Box={name=u3norm2,%
+        xlabel={{"N","dummy"}},fill=\BNColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (u3norm2-east) {Box={name=u3lrelu2,%
+        xlabel={{"A","dummy"}},fill=\ReluColor,height=40,width=2,depth=40}};
+\pic[shift={(0,0,0)}] at (u3lrelu2-east) {Box={name=u3conv2,%
+        xlabel={{"O","dummy"}},fill=\ConvColor,height=40,width=7,depth=40,zlabel=W}};
+        
+% output
+\pic[shift={(\horsep,0,0)}] at (u3conv2-east) {Box={name=output,%
+        xlabel={{"O","dummy"}},fill=\SoftmaxColor,height=40,width=7,depth=40,zlabel=W,%
+        caption=Output - Softmax}};
+        
+%paths
+
+\draw[connection](input-east)--node{\midarrow}(b1conv1-west);
+
+\draw[connection](b1conv2-east)--node{\midarrow}(d1norm1-west);
+
+\path (d1conv-east) -- (d2norm1-west|-d1conv-east) coordinate[pos=0.5] (d1-mid) ;
+\draw[connection](d1conv-east)--node{\midarrow}(d1-mid)--node{\midarrow}(d2norm1-west-|d1-mid)--node{\midarrow}(d2norm1-west);
+
+\path (d2conv-east) -- (d3norm1-west|-d2conv-east) coordinate[pos=0.5] (d2-mid) ;
+\draw[connection](d2conv-east)--node{\midarrow}(d2-mid)--node{\midarrow}(d3norm1-west-|d2-mid)--node{\midarrow}(d3norm1-west);
+
+\path (d3conv-east) -- (b2conv1-west|-d3conv-east) coordinate[pos=0.5] (d3-mid) ;
+\draw[connection](d3conv-east)--node{\midarrow}(d3-mid)--node{\midarrow}(b2conv1-west-|d3-mid)--node{\midarrow}(b2conv1-west);
+
+%long skips
+
+\draw[connection](d3conv-east)--node{\midarrow}(sum1-west);
+\draw[connection](d2conv-east)--node{\midarrow}(sum2-west);
+\draw[connection](d1conv-east)--node{\midarrow}(sum3-west);
+
+%upsampling through sum
+
+\draw[connection](b2conv2-north)--node{\midarrow}(sum1-south);
+\draw[connection](u1conv2-north)--node{\midarrow}(sum2-south);
+\draw[connection](u2conv2-north)--node{\midarrow}(sum3-south);
+
+\draw[connection](sum1-east)--node{\midarrow}(u1maxpool-west);
+\draw[connection](sum2-east)--node{\midarrow}(u2maxpool-west);
+\draw[connection](sum3-east)--node{\midarrow}(u3maxpool-west);
+
+%classification
+\draw[connection](u3conv2-east)--node{\midarrow}(output-west);
+        
+\end{tikzpicture}
+}

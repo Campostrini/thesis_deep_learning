@@ -1,0 +1,57 @@
+\chapter{Introduction}\label{chap1}
+\thispagestyle{plain}
+
+% ====SECTION 1 ================================================================
+\section{Motivation}
+Current weather forecasts are based on global numerical weather prediction (NWP) models that solve the governing physical equations of the atmosphere to predict its future states. If the forecast happens for very short time-frames in the order of a couple of hours to, according to some authors, 6 hours, the forecast is referred to as nowcast. However, for these time-frames, numerical methods of predicting the weather are bound by the incredible amount of computing power required leading to a necessary trade-off between timeliness of the prediction and spatial resolution. For instance the High-Resolution Rapid Refresh model (HRRR) is a National Oceanic and Atmospheric Administration (NOAA) atmospheric model with 3km spatial resolution updated hourly \citep{NOAA2021} that covers the extension of the United States. 
+
+For predicting variables of high interest to the public such as spatial precipitation distribution, optical flow algorithms are currently being used for time horizons from 1h to 4h. These algorithms use geometrical features in the input images and their spatial movement -- for instance by using radar reflectivity maps -- to extrapolate their position at future timestamps.
+
+The governing equations of the physical processes behind the behaviour of the atmosphere are of a non-linear nature. This suggests that non-linear statistical models such as artificial neural networks -- that abstract features from a historical dataset -- would be able to represent these processes. Deep learning -- i.e. neural networks with many hidden layers -- has recently become a plausible method of predicting physical processes mainly driven by historical-data availability and reduced cost of the devices used for the relevant computations (Graphics Processing Units or GPUs).
+
+Given the historical archives of radar precipitation maps it is clear that deep learning could be applied to the precipitation nowcasting problem. A significant point in favor of investigating this approach is that, after the moderately low cost of the training of a deep neural network model, the production of predictions (also called inferences) are characterized by both an incredibly low cost and very short time frames (in the order of 1sec). So much so that this can even happen consumer-grade GPUs. This properties satisfy the timeliness requirement of precipitation nowcasting.
+
+%Precipitation impacts on society in terms of cost and life.
+%Importance of forecasting it.
+%Methods of forecast.
+%Recently deep learning in geophysical sciences.
+%Advantages and Disadvantages of these methods.
+%Need to investigate Deep learning approach because of very low cost of inference and a great availability of data.
+% ==== SECTION 2 ===============================================================
+\section{State of the Art}\label{1sec:2}
+Artificial neural networks find their origin in \citet{McCulloch1943AActivity} where the authors describe them as having thresholds and weights finding that, in principle, a neural network could compute every function that a physical computer is able to compute. \citet{Rosenblatt1958TheBrain} proposed the first trainable neural network. The perceptron -- as it is called -- has all the characteristics of modern day neural networks except that it is very simple in its design. From this original design the multi-layer perceptron has become the standard artificial neural network. It is also known as fully-connected feed-forward neural network and is fundamentally made of units grouped into layers. The information flows from the input layer to the output layer passing through the (hidden) layers in-between. The units in a layer take as input the signals from all the units of the layer before them, they weight them according to specific weights that are subject to optimization, apply a non-linear function acting as threshold and finally pass on a value to all the units of the following layer until the signal reaches the output unit. Neural networks have found many applications throughout the sciences due to their versatility in finding statistical relations. Their main drawbacks are the design -- no canonical designs exist for a given task -- the search for the right combination of parameters governing the behaviour of the model (also called hyperparameters) and the computational demands compared to other statistical methods.
+
+Deep learning has been used in the physical sciences for predictions spanning the entire field for quite some time now, mainly led by the general advances of the machine learning field. A clear example of the use of deep learning in the Earth sciences is \citet{Steffenel2021ForecastingExperiment} where a deep neural network forecasted O3 advection. \citet{Reichstein2019DeepScience} give a thorough overview of deep learning in Earth Sciences.
+
+As it pertains to the particular task of predicting the weather, many approaches have been proposed for a variety of different tasks. Using deep learning methods to forecast future states of the atmosphere is also called deep learning weather prediction (DLWP). \citet{Ren2021DeepSurvey} propose three different groupings for the architectures that solve weather prediction problems. (1) those based on well known architectures from the general literature, such as autoencoders \citep{Lin2018DynamicForecast,Hossain2015ForecastingApproach}, convolutional neural networks \citep{Qiu2017ANetworks} or long-short-term memory networks \citep{Karevan2018Spatio-temporalForecasting}, (2) hybrid architectures composed of a combination of those in (1), (3) a union of deep neural networks with NWP models to join the benefits of both theory-driven and data-driven approaches.
+
+In the specific case of precipitation nowcasting, many different solutions have been employed (see \citet{Ren2021DeepSurvey} for a survey of the current methods).
+
+% Forecasting radar images using past snapshots is a problem called video prediction - well known in the general Artificial Intelligence literature. Hence, some methods used come directly from the field.
+
+\citet{Shi2015ConvolutionalNowcasting} propose a convolutional long-short-term memory (ConvLSTM) network for precipitation nowcasting that consists of a combination of convolutional and LSTM network structures. However, a main drawback is that as structured, it is location invariant. For this reason \citet{Shi2017DeepModel} propose the trajectory grated recurrent unit (TrajGRU) model that adds the ability for the model to actively learn the structure of natural motion and transformation which is location-dependent. This kind of model has been shown to perform exceptionally well for time-series predictions as the recurrent structure implicitly assumes a chaining of past and future events of the series. \citet{Wang2017PredRNN:LSTMs,Wang2018PredRNN++:Learning} also adopt variations of the LSTM core structure proposing the predictive recurrent neural network (PredRNN) and the improvement PredRNN++ respectively. \citet{Wang2018ApplicationNowcasting} successfully applies them to the task of precipitation nowcasting.
+
+Google Research \citet{Agrawal2019MachineImages,Snderby2020MetNet:Forecasting} were both able to successfully apply DLWP to precipitation now-casting even surpassing NOAA's HRRR model. The U-Net architecture, used in \citet{Agrawal2019MachineImages} and \citet{Ayzel2020RainNetNowcasting}, is directly inspired from the well known model introduced in \citet{Ronneberger2015U-Net:Segmentation} and operate with radar precipitation images at 10min and 5min intervals respectively. With the implementation of skip connections \citep{He2016DeepRecognition,He2016IdentityNetworks}, this model gave good results in both applications to precipitation nowcasting. The main idea behind this type of architecture is the division of the network into two distinct parts, the encoder and the decoder. The first part is responsible for abstracting features that, with increasing depth, become more high-level. The second part of the network tries to rebuild a plausible image by using more low-level features when the stream nears to the output layer.
+
+
+%Different ways in which deep learning has been used in the physical sciences.
+%Particular problem of radar image forecasting.
+%Different approaches. (ways to read the problem)
+%Main issues that have been found with the various approaches.
+%What was found to be important for solving some of these issues.
+%How did we come to use U-Net.
+%Why 1 hourly. Most use 5 minutes.
+
+% ==== SECTION 3 ===============================================================
+\section{Goals and Outline}\label{sec:researchquestions}
+The aim of this project is to investigate the use of deep learning with 1h cumulative data of precipitation in northern Germany with a U-Net architecture model inspired by \citet{Agrawal2019MachineImages}. Some intuitions from \citet{Ayzel2020RainNetNowcasting} are used. The U-Net is applied to a dataset of hourly cumulated precipitation amounts freely provided by the German weather service - Deutscher Wetterdienst (DWD). The model is tasked with predicting the future radar precipitation maps in the simplified form of 4 mutually exclusive precipitation classes by taking as input multiple continuously-valued precipitation maps for the preceding timestamps. This task is also known as multi-class classification or multi-class segmentation. To better understand the predictive power of the model, it is compared with the persistence benchmark. This benchmark consists of predicting a future state of the atmosphere by assuming it remains unchanged from the last available timestamp before the prediction. Albeit its simplicity, persistence predictions are not trivially easy to outperform. To facilitate the training process of the model, avoid overfitting and better the final results -- a process called regularization -- this project uses methods taken directly from the deep learning literature.
+The thesis will address the following questions:
+\begin{itemize}
+\item[(1)] Does the employed neural network outperform persistence?
+\item[(2)] How does model performance depend on the rainfall intensity?
+\item[(3)] The model of \citet{Agrawal2019MachineImages} after which this project is inspired outperformed persistence for all precipitation classes. Can this result be confirmed?
+\end{itemize}
+
+The second and next chapter of this thesis covers the theoretical principles behind the production of radar precipitation maps, addresses the dataset used in the project and its pre-processing for the specific applications to the task addressed with the proposed model. It illustrates the workings of neural networks giving more attention to the components of the model architecture that are used in this project. Details are given on the deep learning regularization techniques that are later employed. Chapter three provides the results of the project. Finally, chapter four states the answers to the research questions, discusses and compares them with similar studies and suggests plausible developments and open questions.
+
+
